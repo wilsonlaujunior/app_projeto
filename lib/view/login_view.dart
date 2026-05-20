@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import '../controller/projeto_controller.dart';
+
+import '../controller/login_controller.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -10,35 +11,28 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  final ctrl = GetIt.I.get<ProjetoController>();
 
-  late VoidCallback listener;
+  final ctrl = GetIt.I.get<LoginController>();
 
   @override
   void initState() {
     super.initState();
 
     // LIMPAR CAMPOS
-    ctrl.txtSenha.clear();
     ctrl.txtEmail.clear();
-
-    listener = () => setState(() {});
-    ctrl.addListener(listener);
-  }
-
-  @override
-  void dispose() {
-    ctrl.removeListener(listener);
-    super.dispose();
+    ctrl.txtSenha.clear();
   }
 
   // VALIDAÇÃO DE EMAIL
   bool emailValido(String email) {
-    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+    return RegExp(
+      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+    ).hasMatch(email);
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: const Color(0xFFE8F5E9),
 
@@ -46,11 +40,19 @@ class _LoginViewState extends State<LoginView> {
         child: SingleChildScrollView(
           child: Column(
             children: [
+
               // TOPO
               Column(
                 children: [
-                  Icon(Icons.coronavirus_outlined, color: Colors.green[700], size: 70),
+
+                  Icon(
+                    Icons.coronavirus_outlined,
+                    color: Colors.green[700],
+                    size: 70,
+                  ),
+
                   const SizedBox(height: 10),
+
                   Text(
                     'Chimeric',
                     style: TextStyle(
@@ -64,13 +66,15 @@ class _LoginViewState extends State<LoginView> {
 
               const SizedBox(height: 30),
 
-              // CONTAINER
+              // CONTAINER LOGIN
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 padding: const EdgeInsets.all(25),
+
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
+
                   boxShadow: const [
                     BoxShadow(
                       color: Colors.black26,
@@ -83,6 +87,8 @@ class _LoginViewState extends State<LoginView> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+
+                    // TÍTULO
                     Text(
                       'Login',
                       style: TextStyle(
@@ -98,8 +104,10 @@ class _LoginViewState extends State<LoginView> {
                     TextField(
                       controller: ctrl.txtEmail,
                       keyboardType: TextInputType.emailAddress,
+
                       decoration: InputDecoration(
                         labelText: 'Email',
+
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -112,8 +120,10 @@ class _LoginViewState extends State<LoginView> {
                     TextField(
                       controller: ctrl.txtSenha,
                       obscureText: true,
+
                       decoration: InputDecoration(
                         labelText: 'Senha',
+
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -123,13 +133,31 @@ class _LoginViewState extends State<LoginView> {
                     // ESQUECEU SENHA
                     Align(
                       alignment: Alignment.centerRight,
+
                       child: TextButton(
                         onPressed: () {
-                          Navigator.pushNamed(context, 'senha');
+
+                          if (ctrl.txtEmail.text.isEmpty) {
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Digite seu email primeiro',
+                                ),
+                              ),
+                            );
+
+                            return;
+                          }
+
+                          ctrl.esqueceuSenha(context);
                         },
+
                         child: Text(
                           'Esqueceu a senha?',
-                          style: TextStyle(color: Colors.green[700]),
+                          style: TextStyle(
+                            color: Colors.green[700],
+                          ),
                         ),
                       ),
                     ),
@@ -139,38 +167,52 @@ class _LoginViewState extends State<LoginView> {
                     // BOTÃO ENTRAR
                     SizedBox(
                       width: double.infinity,
+
                       child: ElevatedButton(
+
                         onPressed: () {
+
                           String email = ctrl.txtEmail.text;
                           String senha = ctrl.txtSenha.text;
 
-                          // VALIDAÇÂO DE CAMPOS VAZIOS
+                          // CAMPOS VAZIOS
                           if (email.isEmpty || senha.isEmpty) {
+
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Erro: preencha todos os campos'),
+                                content: Text(
+                                  'Preencha todos os campos',
+                                ),
                               ),
                             );
+
                             return;
                           }
 
-                          // VALIDAÇÃO DE EMAIL INVÁLIDO
+                          // EMAIL INVÁLIDO
                           if (!emailValido(email)) {
+
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Erro: e-mail inválido'),
+                                content: Text(
+                                  'E-mail inválido',
+                                ),
                               ),
                             );
+
                             return;
                           }
 
-                          // SUCESSO
-                          Navigator.pushNamed(context, 'home');
+                          // LOGIN FIREBASE
+                          ctrl.login(context);
                         },
 
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green[700],
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 16,
+                          ),
+
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -178,6 +220,7 @@ class _LoginViewState extends State<LoginView> {
 
                         child: const Text(
                           'Entrar',
+
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -186,20 +229,29 @@ class _LoginViewState extends State<LoginView> {
                       ),
                     ),
 
-                                     
                     const SizedBox(height: 20),
 
                     // CADASTRO
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
+
                       children: [
-                        const Text('Não tem conta? '),
+
+                        const Text(
+                          'Não tem conta? ',
+                        ),
+
                         GestureDetector(
                           onTap: () {
-                            Navigator.pushNamed(context, 'cadastrar');
+                            Navigator.pushNamed(
+                              context,
+                              'cadastrar',
+                            );
                           },
+
                           child: Text(
                             'Cadastre-se',
+
                             style: TextStyle(
                               color: Colors.green[700],
                               fontWeight: FontWeight.bold,

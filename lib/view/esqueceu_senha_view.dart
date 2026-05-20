@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import '../controller/projeto_controller.dart';
+
+import '../controller/login_controller.dart';
 
 class EsqueceuSenhaView extends StatefulWidget {
   const EsqueceuSenhaView({super.key});
@@ -10,13 +11,17 @@ class EsqueceuSenhaView extends StatefulWidget {
 }
 
 class _EsqueceuSenhaViewState extends State<EsqueceuSenhaView> {
-  final ctrl = GetIt.I.get<ProjetoController>();
+  final ctrl = GetIt.I.get<LoginController>();
 
   late VoidCallback listener;
 
   @override
   void initState() {
     super.initState();
+
+    // LIMPA CAMPO
+    ctrl.txtEmailEsqueceuSenha.clear();
+
     listener = () => setState(() {});
     ctrl.addListener(listener);
   }
@@ -29,7 +34,9 @@ class _EsqueceuSenhaViewState extends State<EsqueceuSenhaView> {
 
   // VALIDAÇÃO DE EMAIL
   bool emailValido(String email) {
-    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+    return RegExp(
+      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+    ).hasMatch(email);
   }
 
   @override
@@ -64,6 +71,7 @@ class _EsqueceuSenhaViewState extends State<EsqueceuSenhaView> {
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 padding: const EdgeInsets.all(25),
+
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
@@ -80,20 +88,25 @@ class _EsqueceuSenhaViewState extends State<EsqueceuSenhaView> {
                   children: [
                     // TEXTO
                     Text(
-                      'Informe o e-mail cadastrado para enviarmos a nova senha',
+                      'Informe o e-mail cadastrado para enviarmos o link de recuperação de senha.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey[700],
+                      ),
                     ),
 
                     const SizedBox(height: 25),
 
                     // CAMPO EMAIL
                     TextField(
-                      controller: ctrl.txtEmail,
+                      controller: ctrl.txtEmailEsqueceuSenha,
                       keyboardType: TextInputType.emailAddress,
+
                       decoration: InputDecoration(
                         labelText: 'E-mail',
-                        prefixIcon: Icon(Icons.email),
+                        prefixIcon: const Icon(Icons.email),
+
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -105,31 +118,41 @@ class _EsqueceuSenhaViewState extends State<EsqueceuSenhaView> {
                     // BOTÃO
                     SizedBox(
                       width: double.infinity,
+
                       child: ElevatedButton(
                         onPressed: () {
-                          String email = ctrl.txtEmail.text;
+                          String email =
+                              ctrl.txtEmailEsqueceuSenha.text;
 
-                          if (email.isEmpty || !emailValido(email)) {
-                            ScaffoldMessenger.of(context).showSnackBar(
+                          // VALIDAÇÃO
+                          if (email.isEmpty ||
+                              !emailValido(email)) {
+
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(
                               const SnackBar(
-                                content: Text('Erro: E-mail inválido'),
+                                content: Text(
+                                  'Erro: E-mail inválido',
+                                ),
                               ),
                             );
+
                             return;
                           }
 
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('E-mail de recuperação enviado'),
-                            ),
-                          );
+                          // FIREBASE
+                          ctrl.esqueceuSenha(context);
                         },
 
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green[700],
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 16,
+                          ),
+
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius:
+                                BorderRadius.circular(12),
                           ),
                         ),
 
@@ -150,9 +173,12 @@ class _EsqueceuSenhaViewState extends State<EsqueceuSenhaView> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
+
                       child: Text(
                         'Voltar',
-                        style: TextStyle(color: Colors.green[700]),
+                        style: TextStyle(
+                          color: Colors.green[700],
+                        ),
                       ),
                     ),
                   ],
