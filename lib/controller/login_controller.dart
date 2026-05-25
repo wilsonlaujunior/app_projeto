@@ -49,7 +49,7 @@ class LoginController extends ChangeNotifier {
         password: txtSenha.text,
       );
 
-      // SALVAR DADOS NO FIRESTORE
+  // SALVAR DADOS NO FIRESTORE
 
       await db.collection('usuarios').doc(usuario.user!.uid).set({
         'uid': usuario.user!.uid,
@@ -58,7 +58,7 @@ class LoginController extends ChangeNotifier {
         'telefone': txtTelefone.text,
       });
 
-      // MENSAGEM DE SUCESSO
+  // MENSAGEM DE SUCESSO
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -69,7 +69,7 @@ class LoginController extends ChangeNotifier {
 
       limpar();
 
-      // REDIRECIONAR PARA LOGIN
+  // REDIRECIONAR PARA LOGIN
 
       Future.delayed(const Duration(seconds: 2), () {
 

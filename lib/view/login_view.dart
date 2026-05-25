@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-
 import '../controller/login_controller.dart';
 
 class LoginView extends StatefulWidget {
@@ -131,38 +130,26 @@ class _LoginViewState extends State<LoginView> {
                     ),
 
                     // ESQUECEU SENHA
-                    Align(
-                      alignment: Alignment.centerRight,
+                        Align(
+                          alignment: Alignment.centerRight,
 
-                      child: TextButton(
-                        onPressed: () {
+                          child: TextButton(
+                            onPressed: () {
 
-                          if (ctrl.txtEmail.text.isEmpty) {
+                              Navigator.pushNamed(
+                                context,
+                                'esqueceuSenha',
+                              );
+                            },
 
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Digite seu email primeiro',
-                                ),
+                            child: Text(
+                              'Esqueceu a senha?',
+                              style: TextStyle(
+                                color: Colors.green[700],
                               ),
-                            );
-
-                            return;
-                          }
-
-                          ctrl.esqueceuSenha(context);
-                        },
-
-                        child: Text(
-                          'Esqueceu a senha?',
-                          style: TextStyle(
-                            color: Colors.green[700],
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 10),
 
                     // BOTÃO ENTRAR
                     SizedBox(

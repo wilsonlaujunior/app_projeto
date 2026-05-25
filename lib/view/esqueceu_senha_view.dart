@@ -19,7 +19,7 @@ class _EsqueceuSenhaViewState extends State<EsqueceuSenhaView> {
   void initState() {
     super.initState();
 
-    // LIMPA CAMPO
+  // LIMPA CAMPO
     ctrl.txtEmailEsqueceuSenha.clear();
 
     listener = () => setState(() {});

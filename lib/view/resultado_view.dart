@@ -1,21 +1,26 @@
+import 'package:app_projeto/model/paciente.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
-import '../controller/projeto_controller.dart';
-
-final g = GetIt.instance;
 
 class ResultadoView extends StatefulWidget {
   const ResultadoView({super.key});
 
   @override
-  State<ResultadoView> createState() => _ResultadoViewState();
+  State<ResultadoView> createState() =>
+      _ResultadoViewState();
 }
 
-class _ResultadoViewState extends State<ResultadoView> {
+class _ResultadoViewState
+    extends State<ResultadoView> {
 
-  final TextEditingController concController = TextEditingController();
-  final TextEditingController volController = TextEditingController();
-  final TextEditingController cartController = TextEditingController();
+  final TextEditingController concController =
+      TextEditingController();
+
+  final TextEditingController volController =
+      TextEditingController();
+
+  final TextEditingController cartController =
+      TextEditingController();
 
   double totalCelulas = 0;
   double totalCart = 0;
@@ -23,14 +28,20 @@ class _ResultadoViewState extends State<ResultadoView> {
   late Paciente paciente;
   late String dia;
 
+  final FirebaseFirestore db =
+      FirebaseFirestore.instance;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
     final args =
-        ModalRoute.of(context)!.settings.arguments as Map;
+        ModalRoute.of(context)!
+            .settings
+            .arguments as Map;
 
     paciente = args['paciente'];
+
     dia = args['dia'];
 
     carregarDados();
@@ -40,29 +51,42 @@ class _ResultadoViewState extends State<ResultadoView> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+
       appBar: AppBar(
         title: const Text('Inserir Resultado'),
         backgroundColor: Colors.green,
       ),
 
       body: Padding(
+
         padding: const EdgeInsets.all(20),
 
         child: SingleChildScrollView(
+
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
+
             children: [
 
-              // DIA SELECIONADO
+              // DIA
               Container(
+
                 width: double.infinity,
+
                 padding: const EdgeInsets.all(15),
+
                 decoration: BoxDecoration(
                   color: Colors.green[100],
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius:
+                      BorderRadius.circular(12),
                 ),
+
                 child: Text(
+
                   'Dia: $dia',
+
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -74,10 +98,15 @@ class _ResultadoViewState extends State<ResultadoView> {
 
               // CONCENTRAÇÃO
               TextField(
+
                 controller: concController,
-                keyboardType: TextInputType.number,
+
+                keyboardType:
+                    TextInputType.number,
+
                 decoration: const InputDecoration(
-                  labelText: 'Concentração celular (cel/mL)',
+                  labelText:
+                      'Concentração celular (cel/mL)',
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -86,8 +115,12 @@ class _ResultadoViewState extends State<ResultadoView> {
 
               // VOLUME
               TextField(
+
                 controller: volController,
-                keyboardType: TextInputType.number,
+
+                keyboardType:
+                    TextInputType.number,
+
                 decoration: const InputDecoration(
                   labelText: 'Volume (mL)',
                   border: OutlineInputBorder(),
@@ -96,10 +129,14 @@ class _ResultadoViewState extends State<ResultadoView> {
 
               const SizedBox(height: 15),
 
-              // EXPRESSÃO CAR-T+
+              // CAR-T
               TextField(
+
                 controller: cartController,
-                keyboardType: TextInputType.number,
+
+                keyboardType:
+                    TextInputType.number,
+
                 decoration: const InputDecoration(
                   labelText: 'CAR-T+ (%)',
                   border: OutlineInputBorder(),
@@ -110,31 +147,49 @@ class _ResultadoViewState extends State<ResultadoView> {
 
               // BOTÃO CALCULAR
               SizedBox(
+
                 width: double.infinity,
+
                 child: ElevatedButton(
+
                   onPressed: calcular,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
+
+                  style:
+                      ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Colors.green,
                   ),
+
                   child: const Text(
                     'Calcular',
-                    style: TextStyle(color: Colors.white),
+
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
 
               const SizedBox(height: 20),
 
-              // TOTAL DE CÉLULAS
+              // TOTAL CÉLULAS
               Container(
+
                 width: double.infinity,
+
                 padding: const EdgeInsets.all(15),
+
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius:
+                      BorderRadius.circular(12),
                 ),
+
                 child: Text(
-                  'Número de Células Totais: ${totalCelulas.toStringAsFixed(2)}',
+
+                  'Número de Células Totais: '
+                  '${totalCelulas.toStringAsFixed(2)}',
+
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -144,16 +199,24 @@ class _ResultadoViewState extends State<ResultadoView> {
 
               const SizedBox(height: 15),
 
-              // TOTAL CÉLULAS CAR-T+
+              // TOTAL CART
               Container(
+
                 width: double.infinity,
+
                 padding: const EdgeInsets.all(15),
+
                 decoration: BoxDecoration(
                   color: Colors.green[50],
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius:
+                      BorderRadius.circular(12),
                 ),
+
                 child: Text(
-                  'Número de Células CAR-T+: ${totalCart.toStringAsFixed(2)}',
+
+                  'Número de Células CAR-T+: '
+                  '${totalCart.toStringAsFixed(2)}',
+
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -163,17 +226,27 @@ class _ResultadoViewState extends State<ResultadoView> {
 
               const SizedBox(height: 25),
 
-              // BOTÃO SALVAR
+              // SALVAR
               SizedBox(
+
                 width: double.infinity,
+
                 child: ElevatedButton(
+
                   onPressed: salvar,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
+
+                  style:
+                      ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Colors.green,
                   ),
+
                   child: const Text(
                     'Salvar',
-                    style: TextStyle(color: Colors.white),
+
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -184,68 +257,175 @@ class _ResultadoViewState extends State<ResultadoView> {
     );
   }
 
+  
   // CALCULAR
+  
   void calcular() {
 
     final double conc =
-        double.tryParse(concController.text) ?? 0;
+        double.tryParse(
+              concController.text.replaceAll(',', '.'),
+            ) ??
+            0;
 
     final double vol =
-        double.tryParse(volController.text) ?? 0;
+        double.tryParse(
+              volController.text.replaceAll(',', '.'),
+            ) ??
+            0;
 
     final double cart =
-        double.tryParse(cartController.text) ?? 0;
+        double.tryParse(
+              cartController.text.replaceAll(',', '.'),
+            ) ??
+            0;
 
     setState(() {
+
       totalCelulas = conc * vol;
-      totalCart = (cart / 100) * totalCelulas;
+
+      totalCart =
+          (cart / 100) * totalCelulas;
     });
   }
 
-  // SALVAR NO CONTROLLER
-  void salvar() {
+  
+  // SALVAR FIRESTORE
+ 
 
-    final controller = g<ProjetoController>();
+          Future<void> salvar() async {
 
-    final double conc =
-        double.tryParse(concController.text) ?? 0;
+            final double conc =
+                double.tryParse(
+                      concController.text.replaceAll(',', '.'),
+                    ) ??
+                    0;
 
-    final double vol =
-        double.tryParse(volController.text) ?? 0;
+            final double vol =
+                double.tryParse(
+                      volController.text.replaceAll(',', '.'),
+                    ) ??
+                    0;
 
-    final double cart =
-        double.tryParse(cartController.text) ?? 0;
+            final double cart =
+                double.tryParse(
+                      cartController.text.replaceAll(',', '.'),
+                    ) ??
+                    0;
 
-    controller.salvarResultado(
-      paciente: paciente,
-      dia: dia,
-      concentracao: conc,
-      volume: vol,
-      cart: cart,
-    );
+            try {
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Dados salvos com sucesso!'),
-      ),
-    );
-  }
+              await db
+                  .collection('resultados')
 
-  // CARREGAR DADOS SALVOS
-  void carregarDados() {
+                  // ID FIXO
+                  .doc('${paciente.id}_$dia')
 
-    final controller = g<ProjetoController>();
+                  .set({
 
-    final resultado =
-        controller.getResultado(paciente, dia);
+                'idPaciente': paciente.id,
 
-    if (resultado != null) {
-      concController.text = resultado.concentracao.toString();
-      volController.text = resultado.volume.toString();
-      cartController.text = resultado.cart.toString();
+                'dia': dia,
 
-      totalCelulas = resultado.totalCelulas;
-      totalCart = resultado.totalCart;
-    }
+                'concentracao': conc,
+
+                'volume': vol,
+
+                'cart': cart,
+
+                'cel_totais': totalCelulas,
+
+                'cel_positivas': totalCart,
+              });
+
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(
+
+                const SnackBar(
+                  content: Text(
+                    'Dados salvos com sucesso!',
+                  ),
+                ),
+              );
+
+            } catch (e) {
+
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(
+
+                SnackBar(
+                  content: Text(
+                    'Erro ao salvar: $e',
+                  ),
+                ),
+              );
+            }
+          }
+
+          
+        // CARREGAR DADOS
+       
+
+        Future<void> carregarDados() async {
+
+          try {
+
+            final query = await db
+                .collection('resultados')
+                .where(
+                  'idPaciente',
+                  isEqualTo: paciente.id,
+                )
+                .where(
+                  'dia',
+                  isEqualTo: dia,
+                )
+                .get();
+
+            if (query.docs.isNotEmpty) {
+
+              final dados =
+                  query.docs.first.data();
+
+              concController.text =
+                  dados['concentracao']
+                      .toString();
+
+              volController.text =
+                  dados['volume']
+                      .toString();
+
+              cartController.text =
+                  dados['cart']
+                      .toString();
+
+              setState(() {
+
+                totalCelulas =
+                    (dados['cel_totais'] as num)
+                        .toDouble();
+
+                totalCart =
+                    (dados['cel_positivas'] as num)
+                        .toDouble();
+              });
+            }
+
+          } catch (e) {
+
+            debugPrint(
+              'Erro ao carregar resultado: $e',
+            );
+          }
+        }
+
+  @override
+  void dispose() {
+
+    concController.dispose();
+    volController.dispose();
+    cartController.dispose();
+
+    super.dispose();
   }
 }

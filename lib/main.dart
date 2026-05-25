@@ -1,46 +1,47 @@
+import 'package:app_projeto/controller/login_controller.dart';
+import 'package:app_projeto/controller/paciente_controller.dart';
+
+import 'package:app_projeto/view/cadastrar_view.dart';
+import 'package:app_projeto/view/editar_paciente_view.dart';
 import 'package:app_projeto/view/emcurso_view.dart';
+import 'package:app_projeto/view/esqueceu_senha_view.dart';
+import 'package:app_projeto/view/home_view.dart';
+import 'package:app_projeto/view/login_view.dart';
 import 'package:app_projeto/view/novo_view.dart';
+import 'package:app_projeto/view/pesquisar_view.dart';
 import 'package:app_projeto/view/resultado_view.dart';
+import 'package:app_projeto/view/sobre_view.dart';
 import 'package:app_projeto/view/visualizar_view.dart';
-import 'package:device_preview_plus/device_preview_plus.dart';
+
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
-import 'package:firebase_core/firebase_core.dart';
+import 'package:device_preview_plus/device_preview_plus.dart';
+
 import 'firebase_options.dart';
 
-import 'controller/projeto_controller.dart';
-import 'controller/login_controller.dart';
-
-import 'view/login_view.dart';
-import 'view/cadastrar_view.dart';
-import 'view/exibir_view.dart';
-import 'view/esqueceu_senha_view.dart';
-import 'view/home_view.dart';
-import 'view/sobre_view.dart';
-
-final g = GetIt.instance;
-
-Future<void> main() async {
+void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  // FIREBASE
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // CONTROLLER PRINCIPAL
-  g.registerSingleton<ProjetoController>(
-    ProjetoController(),
-  );
+  // GET IT
+  GetIt g = GetIt.I;
 
-  // CONTROLLER LOGIN
   g.registerSingleton<LoginController>(
     LoginController(),
   );
 
+  g.registerSingleton<PacienteController>(
+    PacienteController(),
+  );
+
   runApp(
+
     DevicePreview(
       enabled: true,
       builder: (context) => const MainApp(),
@@ -58,14 +59,14 @@ class MainApp extends StatelessWidget {
 
       debugShowCheckedModeBanner: false,
 
-      title: 'Chimeric',
-
-      // DEVICE PREVIEW
       useInheritedMediaQuery: true,
+
       locale: DevicePreview.locale(context),
+
       builder: DevicePreview.appBuilder,
 
-      // TELA INICIAL
+      title: 'Chimeric',
+
       initialRoute: 'login',
 
       routes: {
@@ -74,31 +75,42 @@ class MainApp extends StatelessWidget {
         'login': (context) => const LoginView(),
 
         // CADASTRO
-        'cadastrar': (context) => CadastrarView(),
+        'cadastrar': (context) =>
+            const CadastrarView(),
 
-        // EXIBIR
-        'exibir': (context) => ExibirView(),
-
-        // RECUPERAR SENHA
-        'senha': (context) => EsqueceuSenhaView(),
+        // ESQUECEU SENHA
+        'esqueceuSenha': (context) =>
+            const EsqueceuSenhaView(),
 
         // HOME
-        'home': (context) => HomeView(),
-
-        // SOBRE
-        'sobre': (context) => SobreView(),
+        'home': (context) => const HomeView(),
 
         // NOVO PACIENTE
-        'novo': (context) => NovoView(),
+        'novo': (context) => const NovoView(),
+
+        // PESQUISAR
+        'pesquisar': (context) =>
+            const PesquisarView(),
 
         // EM CURSO
-        'emcurso': (context) => EmCursoView(),
+        'emcurso': (context) =>
+            const EmCursoView(),
 
-        // VISUALIZAR LOTE
-        'visualizar': (context) => VisualizarView(),
+        // RESULTADO
+        'resultado': (context) =>
+            const ResultadoView(),
 
-        // RESULTADOS
-        'resultado': (context) => ResultadoView(),
+        // VISUALIZAR
+        'visualizar': (context) =>
+            const VisualizarView(),
+
+        // SOBRE
+        'sobre': (context) =>
+            const SobreView(),
+
+        // EDITAR
+        'editar': (context) =>
+            const EditarPacienteView(),
       },
     );
   }

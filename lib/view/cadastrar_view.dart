@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-
 import '../controller/login_controller.dart';
 
 class CadastrarView extends StatefulWidget {
@@ -18,8 +17,9 @@ class _CadastrarViewState extends State<CadastrarView> {
   void initState() {
     super.initState();
 
-    // LIMPAR CAMPOS
+  // LIMPAR CAMPOS
     ctrl.txtNome.clear();
+    ctrl.txtTelefone.clear();
     ctrl.txtEmail.clear();
     ctrl.txtSenha.clear();
     ctrl.txtConfirmarSenha.clear();
@@ -76,6 +76,23 @@ class _CadastrarViewState extends State<CadastrarView> {
                   decoration: InputDecoration(
                     labelText: 'Nome',
                     prefixIcon: const Icon(Icons.account_circle),
+
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 15),
+
+                // TELEFONE
+                TextField(
+                  controller: ctrl.txtTelefone,
+                  keyboardType: TextInputType.phone,
+
+                  decoration: InputDecoration(
+                    labelText: 'Telefone',
+                    prefixIcon: const Icon(Icons.phone),
 
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -156,6 +173,7 @@ class _CadastrarViewState extends State<CadastrarView> {
                           // CAMPOS VAZIOS
                           if (
                             ctrl.txtNome.text.isEmpty ||
+                            ctrl.txtTelefone.text.isEmpty ||
                             ctrl.txtEmail.text.isEmpty ||
                             ctrl.txtSenha.text.isEmpty ||
                             ctrl.txtConfirmarSenha.text.isEmpty
