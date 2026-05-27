@@ -1,3 +1,4 @@
-# app_projeto
+# app_projeto - Chimeric
 
-A new Flutter project.
+Projeto de um aplicativo para acompanhamento e gerenciamento de processos produtivos de terapia celular.
+Aplicativo desenvolvido com Fluttere.
